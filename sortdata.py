@@ -24,7 +24,7 @@ class Bacterium(object):
             self.kid = newkid
             self.count += 1
         if self.none == True:
-            self.count = 0
+            self.count = 0 
             return self
 
 def dostuff(bacteria):
@@ -67,7 +67,6 @@ def dostuff(bacteria):
                 bacteriums[parent] = Bacterium(parent, 0, kid)
 
             else:
-                print bacteriums[parent].kid
                 if 'unclassified' in '%s'%(bacteriums[parent].kid):
                     if bacteria[i][j+1] == "unclassified":
                         bacteria[i][j+1] = bacteriums[parent].kid 
@@ -81,11 +80,13 @@ def dostuff(bacteria):
                 else:
                     kid = bacteria[i][j+1]
 
-                bacteriums[parent] = bacteriums[parent].checkkid(kid)
+                bacteriums[parent].checkkid(kid)
+    for i in bacteriums:
+        item = bacteriums[i]
+        if 'unclas' in item.name:
+            print item.name, item.count
 
 dostuff(bacteria)
 
 bact = Bacterium('acidomera', 0, 'acidormia')
 bact = bact.checkkid('acidomena')
-for i in bacteriums:
-    print i
