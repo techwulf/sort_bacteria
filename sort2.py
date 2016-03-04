@@ -1,10 +1,8 @@
 import time
 from subprocess import call
 
-
-call (["rm","-classifphyla.html"])
-call (["wget","http://www.bacterio.net/-classifphyla.html"])
-page = open('-classifphyla.html')
+call (["wget","http://www.bacterio.net/-classifphyla.html","-O","index"])
+page = open('index')
 page = page.read().replace('\n','')
 
 class CheckIt(object):
@@ -183,7 +181,7 @@ def unchild(wholeset):
 
     finished = open('%s.txt' % localtime,'w')
     finished.write(document)
-    finished.close();
+    finished.close()
 
 
 
