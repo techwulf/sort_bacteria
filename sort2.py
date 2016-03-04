@@ -1,4 +1,10 @@
-page = open('index')
+import time
+from subprocess import call
+
+
+call (["rm","-classifphyla.html"])
+call (["wget","http://www.bacterio.net/-classifphyla.html"])
+page = open('-classifphyla.html')
 page = page.read().replace('\n','')
 
 class CheckIt(object):
@@ -70,6 +76,7 @@ def iterate(page):
 
 def sort(alldata):
     wholeset = [] 
+    un = 1
     blankset = ['unclassified','unclassified','none','unclassified', \
                 'none','unclassified','unclassified']
 
@@ -85,7 +92,19 @@ def sort(alldata):
 
                 if bacts[j] == bacts[-1]:
                     theset[j] = i.replace(bacts[j],'')
+                    for k in range(0,6):
+                        if theset[k] == 'unclassified':
+                            if theset[k] in preset[k] and \
+                               theset[0:k] == preset[0:k]:
+
+                                theset[k] = preset[k]
+                            else:
+                                theset[k] = 'unclassified' + str(un)
+                                un += 1
+                        if theset[k] == theset[k+1]:
+                            theset[k+1] = theset[k+1].lower()
                     wholeset.append(theset[:])  
+                    preset = theset[:]
 
                 else:
                     theset[j] = i.replace(bacts[j],'')
@@ -93,6 +112,78 @@ def sort(alldata):
                     for m in range(j+1,len(bacts)):
                         theset.append(blankset[m])
 
+    unchild(wholeset)
+
+
+
+class UnChild(object):
+
+    def __init__(self, parent):
+
+        self.parent = parent
+        self.children = 0
+        self.child = ''
+
+    def check(self, child):
+
+        if self.child != child:
+            self.child = child
+            self.children += 1
+        if self.parent == 'none':
+            self.children = 0
+
+
+def unchild(wholeset):
+    wholeset = wholeset
+    parent = ''
+    child = ''
+    parents = {} 
+    row = 0
+    un = 1
+    cn = 1
+    count = -1
+    document = ''
+    localtime = time.asctime( time.localtime(time.time()) )
+
+    for i in wholeset:
+        for j in range(0,6):
+            parent = i[j]
+            if parent not in parents:
+                if i[j+cn] == 'none':
+                    cn = 2
+
+                child = i[j+cn]
+                parents[parent] = UnChild(parent)
+                parents[parent].check(child)
+            else:
+                if i[j+cn] == 'none':
+                    cn = 2
+
+                child = i[j+cn]
+                parents[parent].check(child)
+            wholeset[count][j] = parents[parent].parent
+            wholeset[count][j+cn] = parents[parent].child
+            cn = 1
+        count += 1
+        #for k in wholeset[count]:
+            #print k,
+            #if k in parents:
+                #print parents[k].children,
+        #print
+
+    document = '################ %s ################\n' % localtime
+
+    for i in wholeset:
+        for j in range(0,len(i)):
+            if i[j] in parents:
+                document += '%s\t%s\t' % (i[j], parents[i[j]].children)
+            else:
+                document += '%s' % i[j]
+        document += '\n'
+
+    finished = open('%s.txt' % localtime,'w')
+    finished.write(document)
+    finished.close();
 
 
 

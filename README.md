@@ -1,0 +1,1 @@
+<h4>git clone this url where you want the directory, the call python2 sort2.py in the directory and it will write you your file</h4>
